@@ -347,7 +347,7 @@ func TestFilterLogsRecursively(t *testing.T) {
 		{
 			Label: "HAPPY_PATH",
 			rangeToFilterLogsResponse: map[string]filterLogsResponse{
-				"10-20": filterLogsResponse{
+				"10-20": {
 					Logs: []ethtypes.Log{
 						logStub,
 					},
@@ -460,12 +460,12 @@ func TestGetLogsInBlockRange(t *testing.T) {
 	from := 10
 	to := 20
 	testCases := []logsInBlockRangeTestCase{
-		logsInBlockRangeTestCase{
+		{
 			Label: "HAPPY_PATH",
 			From:  from,
 			To:    to,
 			RangeToFilterLogsResponse: map[string]filterLogsResponse{
-				aRange(from, to): filterLogsResponse{
+				aRange(from, to): {
 					Logs: []ethtypes.Log{
 						logStub,
 					},
@@ -474,17 +474,17 @@ func TestGetLogsInBlockRange(t *testing.T) {
 			Logs:                   []ethtypes.Log{logStub},
 			FurthestBlockProcessed: to,
 		},
-		logsInBlockRangeTestCase{
+		{
 			Label: "SPLIT_REQUEST_BY_MAX_BLOCKS_IN_QUERY",
 			From:  from,
 			To:    from + maxBlocksInGetLogsQuery + 10,
 			RangeToFilterLogsResponse: map[string]filterLogsResponse{
-				aRange(from, from+maxBlocksInGetLogsQuery-1): filterLogsResponse{
+				aRange(from, from+maxBlocksInGetLogsQuery-1): {
 					Logs: []ethtypes.Log{
 						logStub,
 					},
 				},
-				aRange(from+maxBlocksInGetLogsQuery, from+maxBlocksInGetLogsQuery+10): filterLogsResponse{
+				aRange(from+maxBlocksInGetLogsQuery, from+maxBlocksInGetLogsQuery+10): {
 					Logs: []ethtypes.Log{
 						logStub,
 					},
@@ -493,22 +493,22 @@ func TestGetLogsInBlockRange(t *testing.T) {
 			Logs:                   []ethtypes.Log{logStub, logStub},
 			FurthestBlockProcessed: from + maxBlocksInGetLogsQuery + 10,
 		},
-		logsInBlockRangeTestCase{
+		{
 			Label: "SHORT_CIRCUIT_SEMAPHORE_BLOCKED_REQUESTS_ON_ERROR",
 			From:  from,
 			To:    from + (maxBlocksInGetLogsQuery * (getLogsRequestChunkSize + 1)),
 			RangeToFilterLogsResponse: map[string]filterLogsResponse{
 				// Same number of responses as the getLogsRequestChunkSize since the
 				// error response will stop any further requests.
-				aRange(from, from+maxBlocksInGetLogsQuery-1): filterLogsResponse{
+				aRange(from, from+maxBlocksInGetLogsQuery-1): {
 					Err: errUnexpected,
 				},
-				aRange(from+maxBlocksInGetLogsQuery, from+(maxBlocksInGetLogsQuery*2)-1): filterLogsResponse{
+				aRange(from+maxBlocksInGetLogsQuery, from+(maxBlocksInGetLogsQuery*2)-1): {
 					Logs: []ethtypes.Log{
 						logStub,
 					},
 				},
-				aRange(from+(maxBlocksInGetLogsQuery*2), from+(maxBlocksInGetLogsQuery*3)-1): filterLogsResponse{
+				aRange(from+(maxBlocksInGetLogsQuery*2), from+(maxBlocksInGetLogsQuery*3)-1): {
 					Logs: []ethtypes.Log{
 						logStub,
 					},
@@ -517,17 +517,17 @@ func TestGetLogsInBlockRange(t *testing.T) {
 			Logs:                   []ethtypes.Log{},
 			FurthestBlockProcessed: from - 1,
 		},
-		logsInBlockRangeTestCase{
+		{
 			Label: "CORRECT_FURTHEST_BLOCK_PROCESSED_ON_ERROR",
 			From:  from,
 			To:    from + maxBlocksInGetLogsQuery + 10,
 			RangeToFilterLogsResponse: map[string]filterLogsResponse{
-				aRange(from, from+maxBlocksInGetLogsQuery-1): filterLogsResponse{
+				aRange(from, from+maxBlocksInGetLogsQuery-1): {
 					Logs: []ethtypes.Log{
 						logStub,
 					},
 				},
-				aRange(from+maxBlocksInGetLogsQuery, from+maxBlocksInGetLogsQuery+10): filterLogsResponse{
+				aRange(from+maxBlocksInGetLogsQuery, from+maxBlocksInGetLogsQuery+10): {
 					Err: errUnexpected,
 				}},
 			Logs:                   []ethtypes.Log{logStub},

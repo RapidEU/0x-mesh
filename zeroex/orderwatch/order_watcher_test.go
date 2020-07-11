@@ -1511,7 +1511,7 @@ func TestConvertValidationResultsIntoOrderEventsUnexpired(t *testing.T) {
 		Timestamp: blockTimestamp,
 	}
 	expiringBlockEvents := []*blockwatch.Event{
-		&blockwatch.Event{
+		{
 			Type:        blockwatch.Added,
 			BlockHeader: nextBlock,
 		},
@@ -1529,7 +1529,7 @@ func TestConvertValidationResultsIntoOrderEventsUnexpired(t *testing.T) {
 
 	validationResults := ordervalidator.ValidationResults{
 		Accepted: []*ordervalidator.AcceptedOrderInfo{
-			&ordervalidator.AcceptedOrderInfo{
+			{
 				OrderHash:                orderHash,
 				SignedOrder:              signedOrder,
 				FillableTakerAssetAmount: big.NewInt(1).Div(signedOrder.TakerAssetAmount, big.NewInt(2)),
