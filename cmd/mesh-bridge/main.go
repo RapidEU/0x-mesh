@@ -74,10 +74,7 @@ func pipeOrders(inClient, outClient *rpc.Client, inLabel, outLabel string) {
 	}
 	defer clientSubscription.Unsubscribe()
 	for {
-		incomingSignedOrders, err := receiveBatch(orderEventsChan, clientSubscription, inLabel, outLabel)
-		if err != nil {
-			log.Fatal(err)
-		}
+		incomingSignedOrders := receiveBatch(orderEventsChan, clientSubscription, inLabel, outLabel)
 		if len(incomingSignedOrders) == 0 {
 			continue
 		}
@@ -95,16 +92,16 @@ func pipeOrders(inClient, outClient *rpc.Client, inLabel, outLabel string) {
 	}
 }
 
-func receiveBatch(inChan chan []*zeroex.OrderEvent, subscription *ethrpc.ClientSubscription, inLabel, outLabel string) ([]*zeroex.SignedOrder, error) {
+func receiveBatch(inChan chan []*zeroex.OrderEvent, subscription *ethrpc.ClientSubscription, inLabel, outLabel string) []*zeroex.SignedOrder {
 	signedOrders := []*zeroex.SignedOrder{}
 	timeoutChan := time.After(receiveTimeout)
 	for {
 		if len(signedOrders) >= maxReceiveBatch {
-			return signedOrders, nil
+			return signedOrders
 		}
 		select {
 		case <-timeoutChan:
-			return signedOrders, nil
+			return signedOrders
 		case orderEvents := <-inChan:
 			for _, orderEvent := range orderEvents {
 				if orderEvent.EndState != zeroex.ESOrderAdded {

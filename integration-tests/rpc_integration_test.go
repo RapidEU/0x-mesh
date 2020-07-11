@@ -39,7 +39,7 @@ func runAddOrdersSuccessTest(t *testing.T, rpcEndpointPrefix, rpcServerType stri
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	removeOldFiles(t, ctx)
+	removeOldFiles(t)
 	buildStandaloneForTests(t, ctx)
 
 	// Start a standalone node with a wait group that is completed when the goroutine completes.
@@ -108,7 +108,7 @@ func runGetOrdersTest(t *testing.T, rpcEndpointPrefix, rpcServerType string, rpc
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	removeOldFiles(t, ctx)
+	removeOldFiles(t)
 	buildStandaloneForTests(t, ctx)
 
 	// Start a standalone node with a wait group that is completed when the goroutine completes.
@@ -213,7 +213,7 @@ func runGetStatsTest(t *testing.T, rpcEndpointPrefix, rpcServerType string, rpcP
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	removeOldFiles(t, ctx)
+	removeOldFiles(t)
 	buildStandaloneForTests(t, ctx)
 
 	// Start a standalone node with a wait group that is completed when the goroutine completes.
@@ -272,7 +272,7 @@ func TestOrdersSubscription(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	removeOldFiles(t, ctx)
+	removeOldFiles(t)
 	buildStandaloneForTests(t, ctx)
 
 	// Start a standalone node with a wait group that is completed when the goroutine completes.
@@ -332,7 +332,7 @@ func TestHeartbeatSubscription(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	removeOldFiles(t, ctx)
+	removeOldFiles(t)
 	buildStandaloneForTests(t, ctx)
 
 	// Start a standalone node with a wait group that is completed when the goroutine completes.

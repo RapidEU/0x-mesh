@@ -52,7 +52,7 @@ func init() {
 	}
 }
 
-func removeOldFiles(t *testing.T, ctx context.Context) {
+func removeOldFiles(t *testing.T) {
 	require.NoError(t, os.RemoveAll(filepath.Join(browserIntegrationTestDataDir, "sqlite-db")))
 	require.NoError(t, os.RemoveAll(filepath.Join(browserIntegrationTestDataDir, "p2p")))
 

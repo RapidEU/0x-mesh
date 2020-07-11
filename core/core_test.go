@@ -38,15 +38,15 @@ func TestEthereumChainDetection(t *testing.T) {
 	require.NoError(t, err)
 
 	// simulate starting up on mainnet
-	_, err = initMetadata(1, database)
+	err = initMetadata(1, database)
 	require.NoError(t, err)
 
 	// simulate restart on same chain
-	_, err = initMetadata(1, database)
+	err = initMetadata(1, database)
 	require.NoError(t, err)
 
 	// should error when attempting to start on different chain
-	_, err = initMetadata(2, database)
+	err = initMetadata(2, database)
 	assert.Error(t, err)
 }
 
@@ -209,7 +209,7 @@ func TestOrderSync(t *testing.T) {
 	}
 	for i, testCase := range testCases {
 		testCaseName := fmt.Sprintf("%s (test case %d)", testCase.name, i)
-		t.Run(testCaseName, runOrdersyncTestCase(t, testCase))
+		t.Run(testCaseName, runOrdersyncTestCase(testCase))
 	}
 }
 
@@ -218,7 +218,7 @@ type ordersyncTestCase struct {
 	pConfig privateConfig
 }
 
-func runOrdersyncTestCase(t *testing.T, testCase ordersyncTestCase) func(t *testing.T) {
+func runOrdersyncTestCase(testCase ordersyncTestCase) func(t *testing.T) {
 	return func(t *testing.T) {
 		teardownSubTest := setupSubTest(t)
 		defer teardownSubTest(t)

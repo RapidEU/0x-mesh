@@ -434,7 +434,7 @@ func TestFilterLogsRecursively(t *testing.T) {
 		defer cancel()
 		database, err := db.New(ctx, dbOptions())
 		require.NoError(t, err)
-		fakeLogClient, err := newFakeLogClient(testCase.rangeToFilterLogsResponse)
+		fakeLogClient := newFakeLogClient(testCase.rangeToFilterLogsResponse)
 		require.NoError(t, err)
 		config.Client = fakeLogClient
 		config.DB = database
@@ -540,7 +540,7 @@ func TestGetLogsInBlockRange(t *testing.T) {
 		defer cancel()
 		database, err := db.New(ctx, dbOptions())
 		require.NoError(t, err)
-		fakeLogClient, err := newFakeLogClient(testCase.RangeToFilterLogsResponse)
+		fakeLogClient := newFakeLogClient(testCase.RangeToFilterLogsResponse)
 		require.NoError(t, err)
 		config.DB = database
 		config.Client = fakeLogClient

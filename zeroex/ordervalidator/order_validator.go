@@ -294,9 +294,9 @@ func (o *OrderValidator) BatchValidate(ctx context.Context, rawSignedOrders []*z
 	defer close(semaphoreChan)
 
 	wg := &sync.WaitGroup{}
-	for i, signedOrders := range signedOrderChunks {
+	for _, signedOrders := range signedOrderChunks {
 		wg.Add(1)
-		go func(signedOrders []*zeroex.SignedOrder, i int) {
+		go func(signedOrders []*zeroex.SignedOrder) {
 			trimmedOrders := []wrappers.LibOrderOrder{}
 			for _, signedOrder := range signedOrders {
 				trimmedOrders = append(trimmedOrders, signedOrder.Trim())
@@ -433,7 +433,7 @@ func (o *OrderValidator) BatchValidate(ctx context.Context, rawSignedOrders []*z
 				<-semaphoreChan
 				return
 			}
-		}(signedOrders, i)
+		}(signedOrders)
 	}
 
 	wg.Wait()
@@ -707,7 +707,7 @@ func (o *OrderValidator) BatchOffchainValidation(signedOrders []*zeroex.SignedOr
 			}
 		}
 
-		isSupportedSignature := isSupportedSignature(signedOrder.Signature, orderHash)
+		isSupportedSignature := isSupportedSignature(signedOrder.Signature)
 		if !isSupportedSignature {
 			rejectedOrderInfos = append(rejectedOrderInfos, &RejectedOrderInfo{
 				OrderHash:   orderHash,
@@ -863,7 +863,7 @@ func (o *OrderValidator) computeOptimalChunkSizes(signedOrders []*zeroex.SignedO
 	return chunkSizes
 }
 
-func isSupportedSignature(signature []byte, orderHash common.Hash) bool {
+func isSupportedSignature(signature []byte) bool {
 	signatureType := zeroex.SignatureType(signature[len(signature)-1])
 
 	switch signatureType {

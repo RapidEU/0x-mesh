@@ -328,7 +328,7 @@ func TestFindOrdersSort(t *testing.T) {
 	}
 	for i, testCase := range testCases {
 		testCaseName := fmt.Sprintf("test case %d", i)
-		t.Run(testCaseName, runFindOrdersSortTestCase(t, db, originalOrders, testCase))
+		t.Run(testCaseName, runFindOrdersSortTestCase(db, originalOrders, testCase))
 	}
 }
 
@@ -337,7 +337,7 @@ type findOrdersSortTestCase struct {
 	less     func([]*types.OrderWithMetadata) func(i, j int) bool
 }
 
-func runFindOrdersSortTestCase(t *testing.T, db *DB, originalOrders []*types.OrderWithMetadata, testCase findOrdersSortTestCase) func(t *testing.T) {
+func runFindOrdersSortTestCase(db *DB, originalOrders []*types.OrderWithMetadata, testCase findOrdersSortTestCase) func(t *testing.T) {
 	return func(t *testing.T) {
 		expectedOrders := make([]*types.OrderWithMetadata, len(originalOrders))
 		copy(expectedOrders, originalOrders)
@@ -399,7 +399,7 @@ func TestFindOrdersLimitAndOffset(t *testing.T) {
 	}
 	for i, testCase := range testCases {
 		testCaseName := fmt.Sprintf("test case %d", i)
-		t.Run(testCaseName, runFindOrdersLimitAndOffsetTestCase(t, db, originalOrders, testCase))
+		t.Run(testCaseName, runFindOrdersLimitAndOffsetTestCase(db, testCase))
 	}
 }
 
@@ -410,7 +410,7 @@ type findOrdersLimitAndOffsetTestCase struct {
 	expectedError  string
 }
 
-func runFindOrdersLimitAndOffsetTestCase(t *testing.T, db *DB, originalOrders []*types.OrderWithMetadata, testCase findOrdersLimitAndOffsetTestCase) func(t *testing.T) {
+func runFindOrdersLimitAndOffsetTestCase(db *DB, testCase findOrdersLimitAndOffsetTestCase) func(t *testing.T) {
 	return func(t *testing.T) {
 		findOpts := &OrderQuery{
 			Sort: []OrderSort{
@@ -442,7 +442,7 @@ func TestFindOrdersFilter(t *testing.T) {
 
 	for i, testCase := range testCases {
 		testCaseName := fmt.Sprintf("%s (test case %d)", testCase.name, i)
-		t.Run(testCaseName, runFindOrdersFilterTestCase(t, db, testCase))
+		t.Run(testCaseName, runFindOrdersFilterTestCase(db, testCase))
 	}
 }
 
@@ -475,7 +475,7 @@ func TestFindOrdersFilterSortLimitAndOffset(t *testing.T) {
 	assertOrderSlicesAreEqual(t, expectedOrders, actualOrders)
 }
 
-func runFindOrdersFilterTestCase(t *testing.T, db *DB, testCase orderFilterTestCase) func(t *testing.T) {
+func runFindOrdersFilterTestCase(db *DB, testCase orderFilterTestCase) func(t *testing.T) {
 	return func(t *testing.T) {
 		findOpts := &OrderQuery{
 			Filters: testCase.filters,
@@ -494,11 +494,11 @@ func TestCountOrdersFilter(t *testing.T) {
 
 	for i, testCase := range testCases {
 		testCaseName := fmt.Sprintf("%s (test case %d)", testCase.name, i)
-		t.Run(testCaseName, runCountOrdersFilterTestCase(t, db, testCase))
+		t.Run(testCaseName, runCountOrdersFilterTestCase(db, testCase))
 	}
 }
 
-func runCountOrdersFilterTestCase(t *testing.T, db *DB, testCase orderFilterTestCase) func(t *testing.T) {
+func runCountOrdersFilterTestCase(db *DB, testCase orderFilterTestCase) func(t *testing.T) {
 	return func(t *testing.T) {
 		opts := &OrderQuery{
 			Filters: testCase.filters,
@@ -577,11 +577,11 @@ func TestDeleteOrdersFilter(t *testing.T) {
 	storedOrders, testCases := makeOrderFilterTestCases(t, db)
 	for i, testCase := range testCases {
 		testCaseName := fmt.Sprintf("%s (test case %d)", testCase.name, i)
-		t.Run(testCaseName, runDeleteOrdersFilterTestCase(t, db, storedOrders, testCase))
+		t.Run(testCaseName, runDeleteOrdersFilterTestCase(db, storedOrders, testCase))
 	}
 }
 
-func runDeleteOrdersFilterTestCase(t *testing.T, db *DB, originalOrders []*types.OrderWithMetadata, testCase orderFilterTestCase) func(t *testing.T) {
+func runDeleteOrdersFilterTestCase(db *DB, originalOrders []*types.OrderWithMetadata, testCase orderFilterTestCase) func(t *testing.T) {
 	return func(t *testing.T) {
 		defer func() {
 			// After each case, reset the state of the database by re-adding the original orders.
@@ -791,7 +791,7 @@ func TestFindMiniHeadersSort(t *testing.T) {
 	}
 	for i, testCase := range testCases {
 		testCaseName := fmt.Sprintf("test case %d", i)
-		t.Run(testCaseName, runFindMiniHeadersSortTestCase(t, db, originalMiniHeaders, testCase))
+		t.Run(testCaseName, runFindMiniHeadersSortTestCase(db, originalMiniHeaders, testCase))
 	}
 }
 
@@ -800,7 +800,7 @@ type findMiniHeadersSortTestCase struct {
 	less     func([]*types.MiniHeader) func(i, j int) bool
 }
 
-func runFindMiniHeadersSortTestCase(t *testing.T, db *DB, originalMiniHeaders []*types.MiniHeader, testCase findMiniHeadersSortTestCase) func(t *testing.T) {
+func runFindMiniHeadersSortTestCase(db *DB, originalMiniHeaders []*types.MiniHeader, testCase findMiniHeadersSortTestCase) func(t *testing.T) {
 	return func(t *testing.T) {
 		expectedMiniHeaders := make([]*types.MiniHeader, len(originalMiniHeaders))
 		copy(expectedMiniHeaders, originalMiniHeaders)
@@ -862,7 +862,7 @@ func TestFindMiniHeadersLimitAndOffset(t *testing.T) {
 	}
 	for i, testCase := range testCases {
 		testCaseName := fmt.Sprintf("test case %d", i)
-		t.Run(testCaseName, runFindMiniHeadersLimitAndOffsetTestCase(t, db, originalMiniHeaders, testCase))
+		t.Run(testCaseName, runFindMiniHeadersLimitAndOffsetTestCase(db, testCase))
 	}
 }
 
@@ -873,7 +873,7 @@ type findMiniHeadersLimitAndOffsetTestCase struct {
 	expectedError       string
 }
 
-func runFindMiniHeadersLimitAndOffsetTestCase(t *testing.T, db *DB, originalMiniHeaders []*types.MiniHeader, testCase findMiniHeadersLimitAndOffsetTestCase) func(t *testing.T) {
+func runFindMiniHeadersLimitAndOffsetTestCase(db *DB, testCase findMiniHeadersLimitAndOffsetTestCase) func(t *testing.T) {
 	return func(t *testing.T) {
 		findOpts := &MiniHeaderQuery{
 			Sort: []MiniHeaderSort{
@@ -905,11 +905,11 @@ func TestFindMiniHeadersFilter(t *testing.T) {
 	_, testCases := makeMiniHeaderFilterTestCases(t, db)
 	for i, testCase := range testCases {
 		testCaseName := fmt.Sprintf("%s (test case %d)", testCase.name, i)
-		t.Run(testCaseName, runFindMiniHeadersFilterTestCase(t, db, testCase))
+		t.Run(testCaseName, runFindMiniHeadersFilterTestCase(db, testCase))
 	}
 }
 
-func runFindMiniHeadersFilterTestCase(t *testing.T, db *DB, testCase miniHeaderFilterTestCase) func(t *testing.T) {
+func runFindMiniHeadersFilterTestCase(db *DB, testCase miniHeaderFilterTestCase) func(t *testing.T) {
 	return func(t *testing.T) {
 		findOpts := &MiniHeaderQuery{
 			Filters: testCase.filters,
@@ -988,11 +988,11 @@ func TestDeleteMiniHeadersFilter(t *testing.T) {
 
 	for i, testCase := range testCases {
 		testCaseName := fmt.Sprintf("%s (test case %d)", testCase.name, i)
-		t.Run(testCaseName, runDeleteMiniHeadersFilterTestCase(t, db, storedMiniHeaders, testCase))
+		t.Run(testCaseName, runDeleteMiniHeadersFilterTestCase(db, storedMiniHeaders, testCase))
 	}
 }
 
-func runDeleteMiniHeadersFilterTestCase(t *testing.T, db *DB, storedMiniHeaders []*types.MiniHeader, testCase miniHeaderFilterTestCase) func(t *testing.T) {
+func runDeleteMiniHeadersFilterTestCase(db *DB, storedMiniHeaders []*types.MiniHeader, testCase miniHeaderFilterTestCase) func(t *testing.T) {
 	return func(t *testing.T) {
 		defer func() {
 			// After each case, reset the state of the database by re-adding the original miniHeaders.
