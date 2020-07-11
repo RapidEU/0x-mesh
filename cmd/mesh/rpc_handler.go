@@ -244,7 +244,7 @@ func SetupOrderStream(ctx context.Context, app *core.App) (*ethrpc.Subscription,
 					// back up, we've noticed the call to `notifier.Notify` return `i/o timeout`
 					// `net.OpError` errors everytime it's called and no values are sent over
 					// `rpcSub.Err()` nor `notifier.Closed()`. In order to stop the error from
-					// endlessly re-occuring, we unsubscribe and return for encountering this type of
+					// endlessly re-occurring, we unsubscribe and return for encountering this type of
 					// error.
 					if _, ok := err.(*net.OpError); ok {
 						logEntry.Trace(message)

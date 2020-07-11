@@ -397,7 +397,7 @@ func (w *Watcher) addLogs(header *types.MiniHeader) (*types.MiniHeader, error) {
 	return header, nil
 }
 
-// getMissedEventsToBackfill finds missed events that might have occured while the Mesh node was
+// getMissedEventsToBackfill finds missed events that might have occurred while the Mesh node was
 // offline. It does this by comparing the last block stored with the latest block discoverable via RPC.
 // If the stored block is older then the latest block, it batch fetches the events for missing blocks,
 // re-sets the stored blocks and returns the block events found.

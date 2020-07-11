@@ -1410,7 +1410,7 @@ func (w *Watcher) meshSpecificOrderValidation(orders []*zeroex.SignedOrder, chai
 		// off-chain which is difficult to support since we need to prune
 		// canceled/invalidated orders from the database. We can special-case some
 		// sender addresses over time. (For example we already have support for
-		// validating Coordinator orders. What we're missing is a way to effeciently
+		// validating Coordinator orders. What we're missing is a way to efficiently
 		// remove orders that are soft-canceled via the Coordinator API).
 		if order.SenderAddress != constants.NullAddress {
 			results.Rejected = append(results.Rejected, &ordervalidator.RejectedOrderInfo{

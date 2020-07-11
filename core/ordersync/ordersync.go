@@ -335,7 +335,7 @@ func (s *Service) GetOrders(ctx context.Context, minPeers int) error {
 					// them toward the number of peers we have successfully synced with.
 					log.WithFields(log.Fields{
 						"provider": id.Pretty(),
-					}).Trace("succesfully got orders from peer via ordersync")
+					}).Trace("successfully got orders from peer via ordersync")
 					m.Lock()
 					successfullySyncedPeers.Add(id.Pretty())
 					successfullySyncedPeerLength := len(successfullySyncedPeers)

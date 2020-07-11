@@ -81,7 +81,7 @@ type Config struct {
 	// SQLDBName is the database name to connect to when using
 	// postgres as data store type.
 	SQLDBName string `envvar:"SQL_DB_NAME" default:"datastore" json:"-"`
-	// SQLDBEngine is the underyling database engine to use as the
+	// SQLDBEngine is the underlying database engine to use as the
 	// database driver.
 	// NOTE: Currently only `postgres` driver is supported.
 	SQLDBEngine string `envvar:"SQL_DB_ENGINE" default:"postgres"`
@@ -358,7 +358,7 @@ func parseAddrs(commaSeparatedAddrs string) ([]ma.Multiaddr, error) {
 }
 
 // NewDHTWithDatastore returns a new Kademlia DHT instance configured with store
-// as the persistant storage interface.
+// as the persistent storage interface.
 func NewDHTWithDatastore(ctx context.Context, store datastore.Batching, host host.Host) (*dht.IpfsDHT, error) {
 	return dht.New(ctx, host, dhtopts.Datastore(store), dhtopts.Protocols(p2p.DHTProtocolID))
 }
