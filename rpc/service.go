@@ -15,7 +15,6 @@ import (
 	"github.com/ethereum/go-ethereum/rpc"
 	ethrpc "github.com/ethereum/go-ethereum/rpc"
 	peer "github.com/libp2p/go-libp2p-core/peer"
-	peerstore "github.com/libp2p/go-libp2p-peerstore"
 	ma "github.com/multiformats/go-multiaddr"
 	log "github.com/sirupsen/logrus"
 )
@@ -35,7 +34,7 @@ type RPCHandler interface {
 	// GetOrders is called when the clients sends a GetOrders request
 	GetOrders(perPage int, minOrderHash string) (*types.GetOrdersResponse, error)
 	// AddPeer is called when the client sends an AddPeer request.
-	AddPeer(peerInfo peerstore.PeerInfo) error
+	AddPeer(peerInfo peer.AddrInfo) error
 	// GetStats is called when the client sends an GetStats request.
 	GetStats() (*types.Stats, error)
 	// SubscribeToOrders is called when a client sends a Subscribe to `orders` request
@@ -144,11 +143,11 @@ func (s *rpcService) GetOrders(perPage int, minOrderHash string) (*types.GetOrde
 // calls rpcHandler.AddPeer. If there is an error, it returns it.
 func (s *rpcService) AddPeer(peerID string, multiaddrs []string) error {
 	// Parse peer ID.
-	parsedPeerID, err := peer.IDB58Decode(peerID)
+	parsedPeerID, err := peer.Decode(peerID)
 	if err != nil {
 		return err
 	}
-	peerInfo := peerstore.PeerInfo{
+	peerInfo := peer.AddrInfo{
 		ID: parsedPeerID,
 	}
 

@@ -281,9 +281,7 @@ func (o *OrderValidator) BatchValidate(ctx context.Context, rawSignedOrders []*z
 
 	// Validate Coordinator orders for soft-cancels
 	signedOrders, coordinatorRejectedOrderInfos := o.batchValidateSoftCancelled(ctx, offchainValidSignedOrders)
-	for _, rejectedOrderInfo := range coordinatorRejectedOrderInfos {
-		validationResults.Rejected = append(validationResults.Rejected, rejectedOrderInfo)
-	}
+	validationResults.Rejected = append(validationResults.Rejected, coordinatorRejectedOrderInfos...)
 
 	signedOrderChunks := [][]*zeroex.SignedOrder{}
 	chunkSizes := o.computeOptimalChunkSizes(signedOrders)

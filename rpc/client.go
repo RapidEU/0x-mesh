@@ -12,7 +12,6 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/rpc"
 	peer "github.com/libp2p/go-libp2p-core/peer"
-	peerstore "github.com/libp2p/go-libp2p-peerstore"
 )
 
 // Client is a JSON RPC 2.0 client implementation over WebSockets. It can be
@@ -62,8 +61,8 @@ func (c *Client) GetOrders(perPage int, minOrderHash common.Hash) (*types.GetOrd
 
 // AddPeer adds the peer to the node's list of peers. The node will attempt to
 // connect to this new peer and return an error if it cannot.
-func (c *Client) AddPeer(peerInfo peerstore.PeerInfo) error {
-	peerIDString := peer.IDB58Encode(peerInfo.ID)
+func (c *Client) AddPeer(peerInfo peer.AddrInfo) error {
+	peerIDString := peer.Encode(peerInfo.ID)
 	multiAddrStrings := make([]string, len(peerInfo.Addrs))
 	for i, addr := range peerInfo.Addrs {
 		multiAddrStrings[i] = addr.String()

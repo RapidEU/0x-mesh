@@ -486,7 +486,7 @@ func (w *Watcher) getLogsInBlockRange(ctx context.Context, from, to int) ([]etht
 	for len(blockRanges) != 0 {
 		var chunk []*blockRange
 		if len(blockRanges) < getLogsRequestChunkSize {
-			chunk = blockRanges[:len(blockRanges)]
+			chunk = blockRanges
 		} else {
 			chunk = blockRanges[:getLogsRequestChunkSize]
 		}
@@ -650,13 +650,9 @@ func (w *Watcher) filterLogsRecurisively(from, to int, allLogs []ethtypes.Log) (
 				return allLogs, fmt.Errorf("Unable to get the logs for block #%d, because it contains too many logs", from)
 			}
 
-			r := numBlocks % 2
+			// FIXME(jalextowle): This had deadcode previously. Was there something that should have
+			// been done here that wasn't originally?
 			firstBatchSize := numBlocks / 2
-			secondBatchSize := firstBatchSize
-			if r == 1 {
-				secondBatchSize = secondBatchSize + 1
-			}
-
 			endFirstHalf := from + firstBatchSize
 			startSecondHalf := endFirstHalf + 1
 			allLogs, err := w.filterLogsRecurisively(from, endFirstHalf, allLogs)

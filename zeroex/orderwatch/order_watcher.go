@@ -18,7 +18,6 @@ import (
 	"github.com/0xProject/0x-mesh/zeroex/ordervalidator"
 	"github.com/0xProject/0x-mesh/zeroex/orderwatch/decoder"
 	"github.com/ethereum/go-ethereum/common"
-	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/event"
 	logger "github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
@@ -47,9 +46,6 @@ const (
 	// it should be considered for permanent deletion. Blocks get mined on avg. every 12 sec, so 5 minutes
 	// corresponds to a block depth of ~25.
 	permanentlyDeleteAfter = 5 * time.Minute
-
-	// defaultMaxOrders is the default max number of orders in storage.
-	defaultMaxOrders = 100000
 
 	// maxBlockEventsToHandle is the max number of block events we want to process in a single
 	// call to `handleBlockEvents`
@@ -334,13 +330,13 @@ func (w *Watcher) handleBlockEvents(
 		for _, log := range event.BlockHeader.Logs {
 			eventType, err := w.eventDecoder.FindEventType(log)
 			if err != nil {
-				switch err.(type) {
+				switch err := err.(type) {
 				case decoder.UntrackedTokenError:
 					continue
 				case decoder.UnsupportedEventError:
 					logger.WithFields(logger.Fields{
-						"topics":          err.(decoder.UnsupportedEventError).Topics,
-						"contractAddress": err.(decoder.UnsupportedEventError).ContractAddress,
+						"topics":          err.Topics,
+						"contractAddress": err.ContractAddress,
 					}).Info("unsupported event found while trying to find its event type")
 					continue
 				default:
@@ -1590,10 +1586,6 @@ func (w *Watcher) unwatchOrder(order *types.OrderWithMetadata, newFillableAmount
 	}
 }
 
-type orderDeleter interface {
-	Delete(id []byte) error
-}
-
 func (w *Watcher) permanentlyDeleteOrder(order *types.OrderWithMetadata) error {
 	if err := w.db.DeleteOrder(order.Hash); err != nil {
 		return err
@@ -1785,9 +1777,4 @@ func (w *Watcher) WaitForAtLeastOneBlockToBeProcessed(ctx context.Context) error
 	case <-time.After(60 * time.Second):
 		return errors.New("timed out waiting for first block to be processed by Mesh node. Check your backing Ethereum RPC endpoint")
 	}
-}
-
-type logWithType struct {
-	Type string
-	Log  ethtypes.Log
 }
