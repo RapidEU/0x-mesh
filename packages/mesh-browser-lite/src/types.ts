@@ -640,8 +640,14 @@ export interface RejectedOrderStatus {
     message: string;
 }
 
+/** @ignore */
+export interface WrapperLatestBlock {
+    number: string;
+    hash: string;
+}
+
 export interface LatestBlock {
-    number: number;
+    number: BigNumber;
     hash: string;
 }
 
@@ -653,7 +659,7 @@ export interface WrapperStats {
     secondaryRendezvous: string[];
     peerID: string;
     ethereumChainID: number;
-    latestBlock: LatestBlock;
+    latestBlock: WrapperLatestBlock;
     numPeers: number;
     numOrders: number;
     numOrdersIncludingRemoved: number;

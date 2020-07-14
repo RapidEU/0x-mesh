@@ -995,7 +995,7 @@ func (app *App) GetStats() (*types.Stats, error) {
 		}
 	}
 	if latestMiniHeader != nil {
-		latestBlock.Number = int(latestMiniHeader.Number.Int64())
+		latestBlock.Number = latestMiniHeader.Number
 		latestBlock.Hash = latestMiniHeader.Hash
 	}
 	numOrders, err := app.db.CountOrders(&db.OrderQuery{
@@ -1051,7 +1051,7 @@ func (app *App) GetStats() (*types.Stats, error) {
 		NumPeers:                          app.node.GetNumPeers(),
 		NumOrdersIncludingRemoved:         numOrdersIncludingRemoved,
 		NumPinnedOrders:                   numPinnedOrders,
-		MaxExpirationTime:                 maxExpirationTime.String(),
+		MaxExpirationTime:                 maxExpirationTime,
 		StartOfCurrentUTCDay:              metadata.StartOfCurrentUTCDay,
 		EthRPCRequestsSentInCurrentUTCDay: metadata.EthRPCRequestsSentInCurrentUTCDay,
 		EthRPCRateLimitExpiredRequests:    app.ethRPCClient.GetRateLimitDroppedRequests(),
