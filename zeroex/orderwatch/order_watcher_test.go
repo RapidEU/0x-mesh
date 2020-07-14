@@ -182,7 +182,7 @@ func TestOrderWatcherUnfundedInsufficientERC20Balance(t *testing.T) {
 	require.NoError(t, err)
 	waitTxnSuccessfullyMined(t, ethClient, txn)
 
-	err = blockWatcher.SyncToLatestBlock()
+	err = blockWatcher.SyncToLatestBlock(ctx)
 	require.NoError(t, err)
 
 	orderEvents := waitForOrderEvents(t, orderEventsChan, 1, 4*time.Second)
@@ -240,7 +240,7 @@ func TestOrderWatcherUnfundedInsufficientERC20BalanceForMakerFee(t *testing.T) {
 	require.NoError(t, err)
 	waitTxnSuccessfullyMined(t, ethClient, txn)
 
-	err = blockWatcher.SyncToLatestBlock()
+	err = blockWatcher.SyncToLatestBlock(ctx)
 	require.NoError(t, err)
 
 	orderEvents := waitForOrderEvents(t, orderEventsChan, 1, 4*time.Second)
@@ -296,7 +296,7 @@ func TestOrderWatcherUnfundedInsufficientERC721Balance(t *testing.T) {
 	require.NoError(t, err)
 	waitTxnSuccessfullyMined(t, ethClient, txn)
 
-	err = blockWatcher.SyncToLatestBlock()
+	err = blockWatcher.SyncToLatestBlock(ctx)
 	require.NoError(t, err)
 
 	orderEvents := waitForOrderEvents(t, orderEventsChan, 1, 4*time.Second)
@@ -354,7 +354,7 @@ func TestOrderWatcherUnfundedInsufficientERC721Allowance(t *testing.T) {
 	require.NoError(t, err)
 	waitTxnSuccessfullyMined(t, ethClient, txn)
 
-	err = blockWatcher.SyncToLatestBlock()
+	err = blockWatcher.SyncToLatestBlock(ctx)
 	require.NoError(t, err)
 
 	orderEvents := waitForOrderEvents(t, orderEventsChan, 1, 4*time.Second)
@@ -409,7 +409,7 @@ func TestOrderWatcherUnfundedInsufficientERC1155Allowance(t *testing.T) {
 	require.NoError(t, err)
 	waitTxnSuccessfullyMined(t, ethClient, txn)
 
-	err = blockWatcher.SyncToLatestBlock()
+	err = blockWatcher.SyncToLatestBlock(ctx)
 	require.NoError(t, err)
 
 	orderEvents := waitForOrderEvents(t, orderEventsChan, 1, 4*time.Second)
@@ -466,7 +466,7 @@ func TestOrderWatcherUnfundedInsufficientERC1155Balance(t *testing.T) {
 	require.NoError(t, err)
 	waitTxnSuccessfullyMined(t, ethClient, txn)
 
-	err = blockWatcher.SyncToLatestBlock()
+	err = blockWatcher.SyncToLatestBlock(ctx)
 	require.NoError(t, err)
 
 	orderEvents := waitForOrderEvents(t, orderEventsChan, 1, 4*time.Second)
@@ -519,7 +519,7 @@ func TestOrderWatcherUnfundedInsufficientERC20Allowance(t *testing.T) {
 	require.NoError(t, err)
 	waitTxnSuccessfullyMined(t, ethClient, txn)
 
-	err = blockWatcher.SyncToLatestBlock()
+	err = blockWatcher.SyncToLatestBlock(ctx)
 	require.NoError(t, err)
 
 	orderEvents := waitForOrderEvents(t, orderEventsChan, 1, 4*time.Second)
@@ -573,7 +573,7 @@ func TestOrderWatcherUnfundedThenFundedAgain(t *testing.T) {
 	require.NoError(t, err)
 	waitTxnSuccessfullyMined(t, ethClient, txn)
 
-	err = blockWatcher.SyncToLatestBlock()
+	err = blockWatcher.SyncToLatestBlock(ctx)
 	require.NoError(t, err)
 
 	orderEvents := waitForOrderEvents(t, orderEventsChan, 1, 4*time.Second)
@@ -605,7 +605,7 @@ func TestOrderWatcherUnfundedThenFundedAgain(t *testing.T) {
 	require.NoError(t, err)
 	waitTxnSuccessfullyMined(t, ethClient, txn)
 
-	err = blockWatcher.SyncToLatestBlock()
+	err = blockWatcher.SyncToLatestBlock(ctx)
 	require.NoError(t, err)
 
 	orderEvents = <-orderEventsChan
@@ -676,7 +676,7 @@ func TestOrderWatcherNoChange(t *testing.T) {
 	require.NoError(t, err)
 	waitTxnSuccessfullyMined(t, ethClient, txn)
 
-	err = blockWatcher.SyncToLatestBlock()
+	err = blockWatcher.SyncToLatestBlock(ctx)
 	require.NoError(t, err)
 
 	// HACK(albrow): Normally we would wait for order events instead of sleeping here,
@@ -735,7 +735,7 @@ func TestOrderWatcherWETHWithdrawAndDeposit(t *testing.T) {
 	require.NoError(t, err)
 	waitTxnSuccessfullyMined(t, ethClient, txn)
 
-	err = blockWatcher.SyncToLatestBlock()
+	err = blockWatcher.SyncToLatestBlock(ctx)
 	require.NoError(t, err)
 
 	orderEvents := waitForOrderEvents(t, orderEventsChan, 1, 4*time.Second)
@@ -768,7 +768,7 @@ func TestOrderWatcherWETHWithdrawAndDeposit(t *testing.T) {
 	require.NoError(t, err)
 	waitTxnSuccessfullyMined(t, ethClient, txn)
 
-	err = blockWatcher.SyncToLatestBlock()
+	err = blockWatcher.SyncToLatestBlock(ctx)
 	require.NoError(t, err)
 
 	orderEvents = <-orderEventsChan
@@ -819,7 +819,7 @@ func TestOrderWatcherCanceled(t *testing.T) {
 	require.NoError(t, err)
 	waitTxnSuccessfullyMined(t, ethClient, txn)
 
-	err = blockWatcher.SyncToLatestBlock()
+	err = blockWatcher.SyncToLatestBlock(ctx)
 	require.NoError(t, err)
 
 	orderEvents := waitForOrderEvents(t, orderEventsChan, 1, 4*time.Second)
@@ -870,7 +870,7 @@ func TestOrderWatcherCancelUpTo(t *testing.T) {
 	require.NoError(t, err)
 	waitTxnSuccessfullyMined(t, ethClient, txn)
 
-	err = blockWatcher.SyncToLatestBlock()
+	err = blockWatcher.SyncToLatestBlock(ctx)
 	require.NoError(t, err)
 
 	orderEvents := waitForOrderEvents(t, orderEventsChan, 1, 4*time.Second)
@@ -926,7 +926,7 @@ func TestOrderWatcherERC20Filled(t *testing.T) {
 	require.NoError(t, err)
 	waitTxnSuccessfullyMined(t, ethClient, txn)
 
-	err = blockWatcher.SyncToLatestBlock()
+	err = blockWatcher.SyncToLatestBlock(ctx)
 	require.NoError(t, err)
 
 	orderEvents := waitForOrderEvents(t, orderEventsChan, 1, 4*time.Second)
@@ -983,7 +983,7 @@ func TestOrderWatcherERC20PartiallyFilled(t *testing.T) {
 	require.NoError(t, err)
 	waitTxnSuccessfullyMined(t, ethClient, txn)
 
-	err = blockWatcher.SyncToLatestBlock()
+	err = blockWatcher.SyncToLatestBlock(ctx)
 	require.NoError(t, err)
 
 	orderEvents := waitForOrderEvents(t, orderEventsChan, 1, 4*time.Second)
@@ -1261,7 +1261,7 @@ func TestOrderWatcherBatchEmitsAddedEvents(t *testing.T) {
 	orderOptions := scenario.OptionsForAll(orderopts.SetupMakerState(true))
 	signedOrders := scenario.NewSignedTestOrdersBatch(t, numOrders, orderOptions)
 
-	err = blockWatcher.SyncToLatestBlock()
+	err = blockWatcher.SyncToLatestBlock(ctx)
 	require.NoError(t, err)
 
 	validationResults, err := orderWatcher.ValidateAndStoreValidOrders(ctx, signedOrders, false, constants.TestChainID)
@@ -1635,7 +1635,7 @@ func setupOrderWatcherScenario(ctx context.Context, t *testing.T, ethClient *eth
 }
 
 func watchOrder(ctx context.Context, t *testing.T, orderWatcher *Watcher, blockWatcher *blockwatch.Watcher, signedOrder *zeroex.SignedOrder, pinned bool) {
-	err := blockWatcher.SyncToLatestBlock()
+	err := blockWatcher.SyncToLatestBlock(ctx)
 	require.NoError(t, err)
 
 	validationResults, err := orderWatcher.ValidateAndStoreValidOrders(ctx, []*zeroex.SignedOrder{signedOrder}, pinned, constants.TestChainID)
@@ -1647,8 +1647,7 @@ func watchOrder(ctx context.Context, t *testing.T, orderWatcher *Watcher, blockW
 }
 
 func setupOrderWatcher(ctx context.Context, t *testing.T, ethRPCClient ethrpcclient.Client, database *db.DB) (*blockwatch.Watcher, *Watcher) {
-	blockWatcherClient, err := blockwatch.NewRpcClient(ethRPCClient)
-	require.NoError(t, err)
+	blockWatcherClient := blockwatch.NewRpcClient(ethRPCClient)
 	topics := GetRelevantTopics()
 	blockWatcherConfig := blockwatch.Config{
 		DB:              database,
@@ -1683,7 +1682,7 @@ func setupOrderWatcher(ctx context.Context, t *testing.T, ethRPCClient ethrpccli
 	storedBlocks, err := database.FindMiniHeaders(nil)
 	require.NoError(t, err)
 	if len(storedBlocks) == 0 {
-		err := blockWatcher.SyncToLatestBlock()
+		err := blockWatcher.SyncToLatestBlock(ctx)
 		require.NoError(t, err)
 	}
 

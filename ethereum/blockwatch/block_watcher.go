@@ -123,7 +123,7 @@ func (w *Watcher) FastSyncToLatestBlock(ctx context.Context) (blocksElapsed int,
 		return 0, nil
 	}
 
-	latestBlock, err := w.client.HeaderByNumber(nil)
+	latestBlock, err := w.client.HeaderByNumber(ctx, nil)
 	if err != nil {
 		return 0, err
 	}
@@ -166,7 +166,7 @@ func (w *Watcher) Watch(ctx context.Context) error {
 
 	// Sync immediately when `Watch()` is called instead of waiting for the
 	// first Ticker tick
-	if err := w.SyncToLatestBlock(); err != nil {
+	if err := w.SyncToLatestBlock(ctx); err != nil {
 		if err == db.ErrClosed {
 			// We can't continue if the database is closed. Stop the watcher and
 			// return an error.
@@ -187,7 +187,7 @@ func (w *Watcher) Watch(ctx context.Context) error {
 			ticker.Stop()
 			return nil
 		case <-ticker.C:
-			if err := w.SyncToLatestBlock(); err != nil {
+			if err := w.SyncToLatestBlock(ctx); err != nil {
 				if err == db.ErrClosed {
 					// We can't continue if the database is closed. Stop the watcher and
 					// return an error.
@@ -225,7 +225,7 @@ func (w *Watcher) Subscribe(sink chan<- []*Event) event.Subscription {
 
 // SyncToLatestBlock syncs our local state of the chain to the latest block found via
 // Ethereum RPC
-func (w *Watcher) SyncToLatestBlock() error {
+func (w *Watcher) SyncToLatestBlock(ctx context.Context) error {
 	w.syncToLatestBlockMu.Lock()
 	defer w.syncToLatestBlockMu.Unlock()
 
@@ -234,7 +234,7 @@ func (w *Watcher) SyncToLatestBlock() error {
 		return err
 	}
 
-	latestHeader, err := w.client.HeaderByNumber(nil)
+	latestHeader, err := w.client.HeaderByNumber(ctx, nil)
 	if err != nil {
 		return err
 	}
@@ -283,7 +283,7 @@ func (w *Watcher) SyncToLatestBlock() error {
 				break
 			}
 			nextBlockNumber := big.NewInt(0).Add(lastStoredHeader.Number, big.NewInt(1))
-			nextHeader, err = w.client.HeaderByNumber(nextBlockNumber)
+			nextHeader, err = w.client.HeaderByNumber(ctx, nextBlockNumber)
 			if err != nil {
 				syncErr = err
 				break
@@ -291,7 +291,7 @@ func (w *Watcher) SyncToLatestBlock() error {
 		}
 
 		var events []*Event
-		events, err = w.buildCanonicalChain(nextHeader, events)
+		events, err = w.buildCanonicalChain(ctx, nextHeader, events)
 		allEvents = append(allEvents, events...)
 		if err != nil {
 			syncErr = err
@@ -327,14 +327,14 @@ func (w *Watcher) shouldRevertChanges(lastStoredHeader *types.MiniHeader, events
 	return newLatestHeader.Number.Cmp(lastStoredHeader.Number) <= 0
 }
 
-func (w *Watcher) buildCanonicalChain(nextHeader *types.MiniHeader, events []*Event) ([]*Event, error) {
+func (w *Watcher) buildCanonicalChain(ctx context.Context, nextHeader *types.MiniHeader, events []*Event) ([]*Event, error) {
 	latestHeader, err := w.stack.Peek()
 	if err != nil {
 		return nil, err
 	}
 	// Is the stack empty or is it the next block?
 	if latestHeader == nil || nextHeader.Parent == latestHeader.Hash {
-		nextHeader, err := w.addLogs(nextHeader)
+		nextHeader, err := w.addLogs(ctx, nextHeader)
 		if err != nil {
 			return events, err
 		}
@@ -358,15 +358,15 @@ func (w *Watcher) buildCanonicalChain(nextHeader *types.MiniHeader, events []*Ev
 		BlockHeader: latestHeader,
 	})
 
-	nextParentHeader, err := w.client.HeaderByHash(nextHeader.Parent)
+	nextParentHeader, err := w.client.HeaderByHash(ctx, nextHeader.Parent)
 	if err != nil {
 		return events, err
 	}
-	events, err = w.buildCanonicalChain(nextParentHeader, events)
+	events, err = w.buildCanonicalChain(ctx, nextParentHeader, events)
 	if err != nil {
 		return events, err
 	}
-	nextHeader, err = w.addLogs(nextHeader)
+	nextHeader, err = w.addLogs(ctx, nextHeader)
 	if err != nil {
 		return events, err
 	}
@@ -382,11 +382,11 @@ func (w *Watcher) buildCanonicalChain(nextHeader *types.MiniHeader, events []*Ev
 	return events, nil
 }
 
-func (w *Watcher) addLogs(header *types.MiniHeader) (*types.MiniHeader, error) {
+func (w *Watcher) addLogs(ctx context.Context, header *types.MiniHeader) (*types.MiniHeader, error) {
 	if !w.withLogs {
 		return header, nil
 	}
-	logs, err := w.client.FilterLogs(ethereum.FilterQuery{
+	logs, err := w.client.FilterLogs(ctx, ethereum.FilterQuery{
 		BlockHash: &header.Hash,
 		Topics:    [][]common.Hash{w.topics},
 	})
@@ -415,7 +415,7 @@ func (w *Watcher) getMissedEventsToBackfill(ctx context.Context, blocksElapsed i
 			return events, err
 		}
 		// Add furthest block processed into the DB
-		latestHeader, err := w.client.HeaderByNumber(big.NewInt(int64(furthestBlockProcessed)))
+		latestHeader, err := w.client.HeaderByNumber(ctx, big.NewInt(int64(furthestBlockProcessed)))
 		if err != nil {
 			return events, err
 		}
@@ -436,7 +436,7 @@ func (w *Watcher) getMissedEventsToBackfill(ctx context.Context, blocksElapsed i
 			blockHeader, found := hashToBlockHeader[log.BlockHash]
 			if !found {
 				blockNumber := big.NewInt(0).SetUint64(log.BlockNumber)
-				header, err := w.client.HeaderByNumber(blockNumber)
+				header, err := w.client.HeaderByNumber(ctx, blockNumber)
 				if err != nil {
 					return events, err
 				}
@@ -536,7 +536,7 @@ func (w *Watcher) getLogsInBlockRange(ctx context.Context, from, to int) ([]etht
 				default:
 				}
 
-				logs, err := w.filterLogsRecurisively(b.FromBlock, b.ToBlock, []ethtypes.Log{})
+				logs, err := w.filterLogsRecursively(ctx, b.FromBlock, b.ToBlock, []ethtypes.Log{})
 				if err != nil {
 					log.WithFields(map[string]interface{}{
 						"error":     err,
@@ -622,7 +622,7 @@ func (w *Watcher) getSubBlockRanges(from, to, rangeSize int) []*blockRange {
 
 const infuraTooManyResultsErrMsg = "query returned more than 10000 results"
 
-func (w *Watcher) filterLogsRecurisively(from, to int, allLogs []ethtypes.Log) ([]ethtypes.Log, error) {
+func (w *Watcher) filterLogsRecursively(ctx context.Context, from, to int, allLogs []ethtypes.Log) ([]ethtypes.Log, error) {
 	log.WithFields(map[string]interface{}{
 		"from": from,
 		"to":   to,
@@ -632,7 +632,7 @@ func (w *Watcher) filterLogsRecurisively(from, to int, allLogs []ethtypes.Log) (
 	if len(w.topics) > 0 {
 		topics = append(topics, w.topics)
 	}
-	logs, err := w.client.FilterLogs(ethereum.FilterQuery{
+	logs, err := w.client.FilterLogs(ctx, ethereum.FilterQuery{
 		FromBlock: big.NewInt(int64(from)),
 		ToBlock:   big.NewInt(int64(to)),
 		Topics:    topics,
@@ -659,11 +659,11 @@ func (w *Watcher) filterLogsRecurisively(from, to int, allLogs []ethtypes.Log) (
 
 			endFirstHalf := from + firstBatchSize
 			startSecondHalf := endFirstHalf + 1
-			allLogs, err := w.filterLogsRecurisively(from, endFirstHalf, allLogs)
+			allLogs, err := w.filterLogsRecursively(ctx, from, endFirstHalf, allLogs)
 			if err != nil {
 				return nil, err
 			}
-			allLogs, err = w.filterLogsRecurisively(startSecondHalf, to, allLogs)
+			allLogs, err = w.filterLogsRecursively(ctx, startSecondHalf, to, allLogs)
 			if err != nil {
 				return nil, err
 			}
