@@ -659,7 +659,7 @@ export interface WrapperStats {
     secondaryRendezvous: string[];
     peerID: string;
     ethereumChainID: number;
-    latestBlock?: WrapperLatestBlock;
+    latestBlock: WrapperLatestBlock;
     numPeers: number;
     numOrders: number;
     numOrdersIncludingRemoved: number;
